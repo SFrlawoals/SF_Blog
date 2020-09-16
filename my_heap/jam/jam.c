@@ -88,8 +88,8 @@ void my_init(){
         strcpy(bottle->name,"KJM\x00");
         strcpy(bottle->ingredient,"Strawberry\x00");
         bottle->description = malloc(sizeof(char)*0x100);
-        strcpy(bottle->description,"\nThank you for trying even though you are busy.\n");
-        strcat(bottle->description,"Thank you for trying even though you are having a hard time.\n");
+        strcat(bottle->description,"\nThank you for trying even though you are having a hard time.\n");
+        strcpy(bottle->description,"Thank you for trying even though you are busy.\n");
         strcat(bottle->description,"Thank you for your continued efforts.\n");
         strcat(bottle->description,"I hope you have a fresh day!\n");
 
@@ -195,7 +195,6 @@ void erase(){
         tmp[res-1] = '\x00';
 
         for(p = bottle;;p=(p->next)){
-                printf("%s",p->name);
                 if(strncmp(p->name,tmp,res) == 0)
                 {
                         free(p->description);
