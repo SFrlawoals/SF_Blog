@@ -1,5 +1,6 @@
 from pwn import*
-p = process('./jam')
+#p = process('./jam')
+p = remote('35.194.245.237 ',8091)
 context(arch = 'amd64',os = 'linux')
 ### Definition
 def menu(choice):
