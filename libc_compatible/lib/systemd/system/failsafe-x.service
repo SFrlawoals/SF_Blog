@@ -1,0 +1,10 @@
+[Unit]
+Description=X.org diagnosis failsafe
+Conflicts=shutdown.target graphical.target
+Requires=plymouth-quit.service
+After=plymouth-quit.service
+
+[Service]
+ExecStart=-/usr/share/xdiagnose/failsafeXServer
+Type=idle
+KillMode=process

@@ -1,0 +1,35 @@
+[Unit]
+
+Description=Braille Device Support
+Documentation=man:brltty(1)
+Documentation=http://brltty.com/
+
+DefaultDependencies=no
+Before=sysinit.target
+
+RequiresMountsFor=/var/lib/brltty
+
+
+[Service]
+
+PIDFile=/run/brltty.pid
+ExecStart=/bin/sh -c "grep -sq '^ *RUN_BRLTTY=no' /etc/default/brltty || exec /sbin/brltty -P /run/brltty.pid"
+
+TimeoutStartSec=5
+TimeoutStopSec=10
+
+Restart=on-failure
+RestartSec=30
+
+Nice=-10
+OOMScoreAdjust=-900
+
+ProtectHome=read-only
+ProtectSystem=full
+SystemCallArchitectures=native
+
+
+[Install]
+WantedBy=sysinit.target
+
+

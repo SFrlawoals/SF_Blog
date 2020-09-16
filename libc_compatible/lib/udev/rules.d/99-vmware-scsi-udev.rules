@@ -1,0 +1,2 @@
+ACTION=="add", SUBSYSTEMS=="scsi", ENV{DEVTYPE}=="scsi_device", ATTRS{vendor}=="VMware*" , ATTRS{model}=="Virtual disk*", ATTRS{timeout}=="?*", ATTR{timeout}="180"
+ACTION=="add", SUBSYSTEMS=="scsi", ENV{DEVTYPE}=="scsi_device", ATTRS{vendor}=="VMware*" , ATTRS{model}=="VMware Virtual S", ATTRS{timeout}=="?*", ATTR{timeout}="180"

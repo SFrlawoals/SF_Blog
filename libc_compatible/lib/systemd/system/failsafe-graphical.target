@@ -1,0 +1,5 @@
+[Unit]
+Description=Graphical failsafe fallback
+Requires=multi-user.target failsafe-x.service
+After=multi-user.target
+AllowIsolate=yes

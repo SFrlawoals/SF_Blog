@@ -1,0 +1,15 @@
+[Unit]
+Description=Firmware update daemon
+Documentation=http://www.fwupd.org/
+After=dbus.service
+Before=gdm.service
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.fwupd
+ExecStart=/usr/lib/x86_64-linux-gnu/fwupd/fwupd
+PrivateTmp=yes
+ProtectHome=yes
+ProtectSystem=full
+RestrictAddressFamilies=AF_NETLINK AF_UNIX
+ReadWriteDirectories=/var/lib/fwupd -/boot/efi
