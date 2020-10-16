@@ -1,5 +1,6 @@
 from pwn import*
-p = process('./sf14')
+#p = process('./sf14')
+p = remote('35.194.245.237',8094)
 context(arch = 'amd64', os = 'linux')
 
 t = 0.05

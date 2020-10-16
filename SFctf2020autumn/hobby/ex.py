@@ -1,6 +1,6 @@
 from pwn import*
-
-p=process('./hobby')
+p=remote('35.201.210.117',9009)
+#p=process('./hobby')
 
 def menu(number):
 	p.sendlineafter(">> ",str(number))
